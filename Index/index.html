@@ -1,0 +1,643 @@
+<!DOCTYPE html >
+<html>
+<head>
+  <script src="//cdn.optimizely.com/js/161469907.js"></script>
+  <meta charset='UTF-8'/>
+  <meta name='robots' content='index'/>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <meta name='description' content='Using WMS layers from NOAA'/>
+  <title>WMS | MapBox</title>
+  <link href='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.css' rel='stylesheet' />
+  <!--[if lte IE 8]>
+    <link href='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.ie.css' rel='stylesheet' />
+  <![endif]-->
+  <link href='http://mapbox.com/css/site.css' rel='stylesheet' />
+  <!--[if IE]><link rel='stylesheet' href='http://mapbox.com/css/site-ie.css' type='text/css'/><![endif]-->
+  <link rel='shortcut icon' href='http://mapbox.com/img/favicon.ico' type='image/x-icon' />
+  <link rel='alternate' type='application/rss+xml' title='RSS' href='http://mapbox.com/blog/blog.rss' />
+  <link rel='stylesheet' href='http://mapbox.com/css/developers.css' />
+  <script src='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.uncompressed.js'></script>
+  <script src='http://mapbox.com/js/site.js'></script>
+  <script src='/mapbox.js/assets/js/prettify.js'></script>
+  <script src='/mapbox.js/assets/js/site.js'></script>
+</head>
+<body class='box'>
+<div class='branding pad3h clearfix'>
+  <div class='cell5'>
+    <a id='mapbox-logo' class='logo' href='http://mapbox.com/' onclick='window.location=(window.mapboxHome||"http://mapbox.com/"); return false;'>MapBox</a>
+    
+    <a class='section-title' href='http://mapbox.com/developers'>developers</a>
+    
+  </div>
+  <ul class='menu cell7'>
+    
+    
+      
+    
+    
+      
+    
+    <li class=''>
+      <a id='nav-design' href='http://mapbox.com/tour/design/'>Design</a>
+    </li>
+    
+    
+      
+    
+    
+      
+    
+    <li class=''>
+      <a id='nav-publish' href='http://mapbox.com/tour/publish/'>Publish</a>
+    </li>
+    
+    
+      
+    
+    
+      
+    
+    <li class=''>
+      <a id='nav-scale' href='http://mapbox.com/tour/scale/'>Scale</a>
+    </li>
+    
+    
+      
+    
+    
+      
+    
+    <li class='plans'>
+      <a id='nav-plans' href='http://mapbox.com/plans/'>Plans</a>
+    </li>
+    
+  </ul>
+</div>
+
+<div class='wrapper'><style type='text/css'>
+.example-header h3 { display:inline; margin-right:10px; }
+.doc-example { border-left:1px solid #ccc; }
+.doc-nav {
+  border-right: 1px solid #CCC;
+  margin-right: -1px;
+  }
+#map {
+  background:#fff;
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  }
+
+#demo {
+  position:relative;
+  height:400px;
+  }
+#demo *:not(.zoomer) {
+  box-sizing:content-box;
+  -moz-box-sizing:content-box;
+  }
+#demo label { display:inline; }
+
+#snippet {
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+  }
+  #snippet .button {
+    position:absolute;
+    bottom:20px; right:20px;
+    z-index:1;
+    }
+
+pre {
+  margin:0;
+  background:transparent;
+  }
+pre:hover { background:transparent; }
+pre a {
+  background:#EAF4F8;
+  border:0;
+  padding:0;
+  -webkit-box-shadow: 0 0 2px #EAF4F8;
+          box-shadow: 0 0 2px #EAF4F8;
+  }
+
+.code-header *,
+.code-footer * { color:#999; }
+
+.doc-footer {
+  border-top:1px solid #ccc;
+  text-align:center;
+  border-left:0;
+  }
+
+.leaflet-control-mapbox-geocoder-form {
+  background: #fff;
+  padding: 10px;
+}
+
+.leaflet-control-mapbox-geocoder-form input {
+  padding:5px;
+  height:20px;
+}
+.leaflet-control .mapbox-button {
+  background: #3887AC;
+  margin: 0 0 0 10px;
+}
+.leaflet-control .mapbox-button:hover {
+  background-color: #3bb2d0;
+}
+
+@media (max-width:640px) {
+  .doc-example { border-bottom:1px solid #ccc; border-left:0px; }
+  .doc-nav {
+    margin-right:0;
+    }
+  }
+</style>
+
+<div class='clearfix doc-header pad3 fillL'>
+  <div class='cell8'>
+    <h2>
+      mapbox.js
+      <span class='version'>v1.1.0</span>
+    </h2>
+    <p>MapBox JavaScript API</p>
+  </div>
+  <ul class='cell4 doc-subnav clearfix'>
+    <li><a href='/mapbox.js/api/'>API</a></li>
+    <li><a href='/mapbox.js/example/v1.0.0/' class='active'>Examples</a></li>
+    <li><a href='/mapbox.js/changelog/'>Changelog</a></li>
+  </ul>
+</div>
+
+<div class='doc-page pad3c fillM clearfix'>
+<div class='fillW clearfix'>
+  <div class='cell3'>
+    <div class='doc-nav'>
+      <form class='doc-search'>
+        <input type='text' placeholder='Filter examples'>
+        <span class='icon search'></span>
+      </form>
+      <ul class='nav pages'>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/centering-markers'>Centering Markers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/change-marker-color-click'>Change Marker Color on Click</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/change-zoom-control-location'>Change Zoom Control Location</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/compositing'>Compositing</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/cross-date-line'>Line Crossing the Date Line</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/custom-legend'>Custom Legend</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/custom-marker'>Custom Marker</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/custom-marker-tooltip'>Custom Marker Tooltips</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/cycle-markers'>Cycling Through Markers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/disable-zooming-panning'>Disable Zooming and Panning</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/draggable-marker'>Draggable Marker</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/external-layers'>External Layers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/filtering-markers'>Filtering Markers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/geocoding'>Geocoding</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/geojson-marker-from-url'>GeoJSON Marker from URL</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/geolocation'>Geolocation</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/interactivity-outside-map-layer'>Interactivity Outside of Map</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/layers'>Layers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/layers-control'>Layers Control</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/leaflet-draw'>Leaflet.draw</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/leaflet-markercluster'>Leaflet.markercluster</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/leaflet-minimap'>Leaflet-MiniMap</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/legend'>Legend</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/linking-to-external-data'>Linking to external data</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/listing-markers'>Listing Markers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/locator'>Locator Tool</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/map-center-geocoding'>Initially Position Map With Geocode</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/map-navigation'>Map Navigation to Places</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/marker-movement'>Marker Movement</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/marker-tooltips-outside-map'>Marker Tooltips Outside the Map</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/markers-as-links'>Markers As Links</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/markers-from-csv'>Loading CSV into Markers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/markers-with-image-slideshow'>Marker Tooltips with Image Slideshow</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/mouse-position'>Mouse Position</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/movetip'>Movetip</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/non-exclusive-markers'>Non-Exclusive Markers</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/opacity'>Opacity control</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/pan-vertical-zoom'>Pan and Vertical Zoom</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/point-in-polygon'>Point in Polygon</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/polyline'>Polylines</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/retina'>Retina</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/scale-control'>Scale Control</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/show-tooltips-on-hover'>Show Tooltips on Hover</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/'>A Simple Map</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/single-marker'>Single Marker</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/theme'>Theme</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/toggling-ui'>Toggling UI</a></li>
+      
+      <li><a class='active' href='/mapbox.js/example/v1.0.0/wms'>WMS</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/youtube'>YouTube</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/zoom-bar'>Zoom Bar</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/zoom-control-position'>Zoom Control Position</a></li>
+      
+      <li><a  href='/mapbox.js/example/v1.0.0/zoom-lens'>Zoom Lens</a></li>
+      
+      </ul>
+    </div>
+  </div>
+  <div class='cell9 doc-example'>
+    <div class='pad2 doc example-header'>
+      <h3>WMS</h3>
+      <span class='description'>Using WMS layers from NOAA</span>
+    </div>
+    <div id='demo' class='doc'><style>
+  #map-ui {
+    position:absolute;
+    top:10px;right:10px;
+    z-index:100;
+    }
+    #map-ui ul {
+      list-style:none;
+      margin:0;padding:0;
+      }
+      #map-ui a {
+        font-size:13px;
+        background:#FFF;
+        color:#3C4E5A;
+        display:block;
+        margin:0;padding:0;
+        border:1px solid #BBB;
+        border-bottom-width:0;
+        min-width:138px;
+        padding:10px;
+        text-decoration:none;
+        }
+      #map-ui a:hover { background:#ECF5FA; }
+      #map-ui li:last-child a {
+        border-bottom-width:1px;
+        -webkit-border-radius:0 0 3px 3px;
+                border-radius:0 0 3px 3px;
+        }
+      #map-ui li:first-child a {
+        -webkit-border-radius:3px 3px 0 0;
+                border-radius:3px 3px 0 0;
+              }
+      #map-ui a.active {
+        background:#3887BE;
+        border-color:#3887BE;
+        color:#FFF;
+        }
+        #map-ui li:last-child a.active {
+          border-top-color:#FFF;
+          }
+
+</style>
+<div id='map'>
+	<div id='map-ui'>
+    <ul>
+      <li><a href='#' class='active' id='temperature'>Temperature</a></li>
+      <li><a href='#' class='active' id='precipitation'>Precipitation</a></li>
+    </ul>
+  </div>
+</div>
+<script>
+var map = L.mapbox.map('map', 'examples.map-y7l23tes')
+    .setView([37, -99], 5);
+
+var temperature = L.tileLayer.wms("http://gis.srh.noaa.gov/arcgis/services/NDFDTemps/MapServer/WMSServer", {
+    format: 'img/png',
+    transparent: true,
+    layers: 16
+}).addTo(map);
+
+var precipitation = L.tileLayer.wms("http://nowcoast.noaa.gov/wms/com.esri.wms.Esrimap/obs", {
+    format: 'image/png',
+    transparent: true,
+    layers: 'RAS_RIDGE_NEXRAD'
+}).addTo(map);
+
+// Layer switcher
+document.getElementById('temperature').onclick = function () {
+    var enable = this.className !== 'active';
+    temperature.setOpacity(enable ? 1 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+
+document.getElementById('precipitation').onclick = function () {
+    var enable = this.className !== 'active';
+    precipitation.setOpacity(enable ? 1 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+</script>
+</div>
+    <div id='snippet' class='doc'>
+    <a class='button big' href='#' id='copy'><span class='icon embed reverse'></span> Select all</a>
+    <div id='code' class='doc'>
+    <pre class='prettyprint code-header'>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' /&gt;
+  &lt;script src='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.js'&gt;&lt;/script&gt;
+  &lt;link href='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.css' rel='stylesheet' /&gt;
+  &lt;!--[if lte IE 8]&gt;
+    &lt;link href='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.ie.css' rel='stylesheet' &gt;
+  &lt;![endif]--&gt;
+  &lt;style&gt;
+    body { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;</pre>
+    <pre class='prettyprint code-body'>&lt;style&gt;
+  #map-ui {
+    position:absolute;
+    top:10px;right:10px;
+    z-index:100;
+    }
+    #map-ui ul {
+      list-style:none;
+      margin:0;padding:0;
+      }
+      #map-ui a {
+        font-size:13px;
+        background:#FFF;
+        color:#3C4E5A;
+        display:block;
+        margin:0;padding:0;
+        border:1px solid #BBB;
+        border-bottom-width:0;
+        min-width:138px;
+        padding:10px;
+        text-decoration:none;
+        }
+      #map-ui a:hover { background:#ECF5FA; }
+      #map-ui li:last-child a {
+        border-bottom-width:1px;
+        -webkit-border-radius:0 0 3px 3px;
+                border-radius:0 0 3px 3px;
+        }
+      #map-ui li:first-child a {
+        -webkit-border-radius:3px 3px 0 0;
+                border-radius:3px 3px 0 0;
+              }
+      #map-ui a.active {
+        background:#3887BE;
+        border-color:#3887BE;
+        color:#FFF;
+        }
+        #map-ui li:last-child a.active {
+          border-top-color:#FFF;
+          }
+
+&lt;/style&gt;
+&lt;div id='map'&gt;
+	&lt;div id='map-ui'&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href='#' class='active' id='temperature'&gt;Temperature&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href='#' class='active' id='precipitation'&gt;Precipitation&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+var map = L.mapbox.map('map', 'examples.map-y7l23tes')
+    .setView([37, -99], 5);
+
+var temperature = L.tileLayer.wms(&quot;http://gis.srh.noaa.gov/arcgis/services/NDFDTemps/MapServer/WMSServer&quot;, {
+    format: 'img/png',
+    transparent: true,
+    layers: 16
+}).addTo(map);
+
+var precipitation = L.tileLayer.wms(&quot;http://nowcoast.noaa.gov/wms/com.esri.wms.Esrimap/obs&quot;, {
+    format: 'image/png',
+    transparent: true,
+    layers: 'RAS_RIDGE_NEXRAD'
+}).addTo(map);
+
+// Layer switcher
+document.getElementById('temperature').onclick = function () {
+    var enable = this.className !== 'active';
+    temperature.setOpacity(enable ? 1 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+
+document.getElementById('precipitation').onclick = function () {
+    var enable = this.className !== 'active';
+    precipitation.setOpacity(enable ? 1 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+&lt;/script&gt;
+</pre>
+    <pre class='prettyprint code-footer'>
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    </div>
+    </div>
+    <div class='doc-footer'>
+      <div class='pad2'>
+        The code and documentation to <a href='http://github.com/mapbox/mapbox.js'>mapbox.js is hosted on GitHub</a> where you can contribute changes and improvements.
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class='developer-footer fillL clearfix'>
+  <div class='col-section footer-label cell3 pad3'>
+    <h3>Developer Tools</h3>
+    <small>Documentation for all our projects.</small>
+  </div>
+  <div class='col-section cell2 pad3'>
+    <a href='http://mapbox.com/developers/api/'>Core API</a>
+    <a href='http://mapbox.com/mapbox.js/api/'>mapbox.js</a>
+    <a href='http://mapbox.com/map-sites/'>Map site templates</a>
+    <a href='http://mapbox.com/mapbox-ios-sdk/'>Mobile SDK for iOS</a>
+  </div>
+  <div class='col-section cell2 pad3'>
+    <a href='https://github.com/mapbox/MapBoxBench'>MapBox Bench</a>
+    <a href='http://mapbox.com/geo-for-google-docs/'>Geo for Google Docs</a>
+    <a href='https://github.com/mapbox/clustr'>Clustr</a>
+  </div>
+</div>
+
+
+<script>
+  $(document).ready(function () {
+    var example = new Docs();
+    $(example.page);
+    $(example.copyCode);
+    example.colorCode(function(){ });
+    example.bindSearch($('.doc-search input'), $('.doc-nav ul'), false);
+  });
+  $(mapbox.docs);
+</script>
+</div>
+
+
+<div class='footer clearfix'>
+  <div class='cell3 pad3 newsletter'>
+    <a class='button big follow' href='http://twitter.com/mapbox' target='_blank'><span class='icon reverse twitter'></span>Follow us</a>
+    <a class='button big contact' href='/contact'><span class='icon reverse contact'></span>Contact us</a>
+    <small>Subscribe to our newsletter</small>
+    <!-- Begin MailChimp Signup Form -->
+    <div id='mc-signup'>
+      <form action='http://mapbox.us2.list-manage1.com/subscribe/post?u=1b29ad842d113cece02035883&amp;id=6cbe531fd0' method='post' id='mc-embedded-subscribe-form' name='mc-embedded-subscribe-form' class='validate' target='_blank'>
+        <div class='mc-field-group clearfix'>
+          <input type='hidden' value='1' name='group[7417][2]'>
+          <div class='field-wrapper'><input type='text' value='' placeholder='Email Address' name='EMAIL' class='required email' id='mce-EMAIL'></div>
+          <input type='submit' value='Subscribe' name='subscribe' id='mc-embedded-subscribe' class='button big icon reverse mail'>
+        </div>
+        <div id='mce-responses'>
+          <div class='response' id='mce-error-response' style='display:none'></div>
+          <div class='response' id='mce-success-response' style='display:none'></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class='cell2 pad3'>
+    <h3>MapBox</h3>
+    <div class='links'>
+      
+    </div>
+    <div class='links'>
+      
+      <a id='footer-tour' href='http://mapbox.com/tour/'>Tour</a>
+      
+      <a id='footer-about' href='http://mapbox.com/about/'>About</a>
+      
+      <a id='footer-plans' href='http://mapbox.com/plans/'>Plans</a>
+      
+      <a id='footer-premium' href='http://mapbox.com/plans/premium/'>Premium</a>
+      
+      <a id='footer-blog' href='http://mapbox.com/blog/'>Blog</a>
+      
+      <a id='footer-status' href='http://mapbox.comhttp://mapbox.com/status/'>Status</a>
+      
+    </div>
+  </div>
+  <div class='cell2 pad3'>
+    <h3>Resources</h3>
+    <div class='links'>
+      
+      <a id='footer-help' href='http://mapbox.com/help/'>Help</a>
+      
+      <a id='footer-developers' href='http://mapbox.com/developers/'>Developers</a>
+      
+      <a id='footer-mobile' href='http://mapbox.com/mobile/'>Mobile</a>
+      
+      <a id='footer-showcase' href='http://mapbox.com/showcase/'>Showcase</a>
+      
+    </div>
+    <h3>Tools</h3>
+    <div class='links'>
+      
+      <a id='footer-tilemill' href='http://mapbox.com/tilemill/'>TileMill</a>
+      
+      <a id='footer-maki' href='http://mapbox.com/maki/'>Maki</a>
+      
+    </div>
+  </div>
+  <div class='cell5 pad3 blogposts'>
+    <h3>Recent blog posts</h3>
+    <div class='links'>
+      <script src='http://mapbox.com/snippets/blog-list.js'></script>
+    </div>
+    <a id='read-more' href='http://mapbox.com/blog/'>Read more <span class='icon next blue'></span></a>
+  </div>
+</div>
+
+<div class='footer-copyright'>
+  <a href='/tos'>Terms of service</a> +
+  <a href='/privacy'>Privacy policy</a>
+  &copy; MapBox
+</div>
+
+
+<script src='https://tiles.mapbox.com/snippets/user.js'></script>
+
+<script type='text/javascript'>
+var _gaq = _gaq || [];
+var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+_gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+_gaq.push(['_setAccount', 'UA-12158002-1']);
+_gaq.push(['_setDomainName', '.mapbox.com']);
+_gaq.push(['_trackPageview']);
+(function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+var _gauges = _gauges || [];
+(function() {
+  var t   = document.createElement('script');
+  t.type  = 'text/javascript';
+  t.async = true;
+  t.id    = 'gauges-tracker';
+  t.setAttribute('data-site-id', '4e970faef5a1f51def000002');
+  t.src = '//secure.gaug.es/track.js';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(t, s);
+})();
+</script>
+
+<script type="text/javascript">
+setTimeout(function(){var a=document.createElement("script");
+var b=document.getElementsByTagName("script")[0];
+a.src=document.location.protocol+"//dnn506yrbagrg.cloudfront.net/pages/scripts/0013/6714.js?"+Math.floor(new Date().getTime()/3600000);
+a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+</script>
+
+</body>
+</html>
